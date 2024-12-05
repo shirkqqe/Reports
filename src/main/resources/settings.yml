@@ -1,0 +1,66 @@
+storage:
+  type: MySQL
+  maxConnections: 3
+  baseName: "report"
+  host: "localhost"
+  port: "3306"
+  user: "root"
+  password: ""
+redis:
+  host: "127.0.0.1"
+  port: 6379
+  timeout: 3000
+properties:
+  serverName: "Классик #0"
+  server: "anarchy_test"
+report_item:
+  material: YELLOW_WOOL
+  name: "&x&F&F&5&6&3&B&o❏ Жалоба №%number% ❏"
+  lore:
+    - " "
+    - "&x&F&F&5&6&3&B&l&n▎&f Заявитель: &x&f&5&8&b&7&a%sender% &f(&aПЖ: %source_true%&f, &4ЛЖ: %source_false% &7|&a ПП: %source_passed%&f, &4ЛП: %source_failed%&f)"
+    - "&x&F&F&5&6&3&B&l&n▎&f Подозреваемый: &x&f&5&8&b&7&a%suspected% &f(&aПЖ: %target_true%&f, &4ЛЖ: %target_false% &7|&a ПП: %target_passed%&f, &4ЛП: %target_failed%&f)"
+    - "&x&F&F&5&6&3&B&l&n▎&f"
+    - "&x&F&F&5&6&3&B&l&n▎&f Последняя проверка: &x&f&5&8&b&7&a%last_check%"
+    - "&x&F&F&5&6&3&B&l&n▎&f Жалоба подана: &x&f&5&8&b&7&a%date%"
+    - "&x&F&F&5&6&3&B&l&n▎&f Сервер: &x&f&5&8&b&7&a%server%"
+    - "&x&F&F&5&6&3&B&l&n▎&f Комментарий:"
+    - "&x&F&F&5&6&3&B&l▎&f  %comment%"
+    - " "
+    - "&x&F&F&5&6&3&B&n◢&f  &a[ЛКМ] &fВзять на рассмотрение"
+    - "&x&F&F&5&6&3&B◤&f         эту жалобу"
+    - " "
+    - "&x&F&F&5&6&3&B&n◢&f  &a[ПКМ] &fПосмотреть все жалобы"
+    - "&x&F&F&5&6&3&B◤&f         Подано &x&F&F&5&6&3&B%count% жалоб"
+  lore_active:
+    - " "
+    - "&x&F&F&5&6&3&B&l&n▎&f Заявитель: &x&f&5&8&b&7&a%sender% &f(&aПЖ: %source_true%&f, &4ЛЖ: %source_false% &7|&a ПП: %source_passed%&f, &4ЛП: %source_failed%&f)"
+    - "&x&F&F&5&6&3&B&l&n▎&f Подозреваемый: &x&f&5&8&b&7&a%suspected% &f(&aПЖ: %target_true%&f, &4ЛЖ: %target_false% &7|&a ПП: %target_passed%&f, &4ЛП: %target_failed%&f)"
+    - "&x&F&F&5&6&3&B&l&n▎&f"
+    - "&x&F&F&5&6&3&B&l&n▎&f Последняя проверка: &x&f&5&8&b&7&a%last_check%"
+    - "&x&F&F&5&6&3&B&l&n▎&f Жалоба подана: &x&f&5&8&b&7&a%date%"
+    - "&x&F&F&5&6&3&B&l&n▎&f Сервер: &x&f&5&8&b&7&a%server%"
+    - "&x&F&F&5&6&3&B&l&n▎&f Комментарий:"
+    - "&x&F&F&5&6&3&B&l▎&f  %comment%"
+    - " "
+    - "&x&F&F&5&6&3&B&n◢&f Дело находится на рассмотрении"
+    - "&x&F&F&5&6&3&B◤&f Администратор: &e%moderator%"
+    - " "
+    - "&x&F&F&5&6&3&B&n◢&f  &a[ПКМ] &fПосмотреть все жалобы"
+    - "&x&F&F&5&6&3&B◤&f         Подано &x&F&F&5&6&3&B%count% жалоб"
+  lore_own:
+    - " "
+    - "&x&F&F&5&6&3&B&l&n▎&f Заявитель: &x&f&5&8&b&7&a%sender% &f(&aПЖ: %source_true%&f, &4ЛЖ: %source_false% &7|&a ПП: %source_passed%&f, &4ЛП: %source_failed%&f)"
+    - "&x&F&F&5&6&3&B&l&n▎&f Подозреваемый: &x&f&5&8&b&7&a%suspected% &f(&aПЖ: %target_true%&f, &4ЛЖ: %target_false% &7|&a ПП: %target_passed%&f, &4ЛП: %target_failed%&f)"
+    - "&x&F&F&5&6&3&B&l&n▎&f"
+    - "&x&F&F&5&6&3&B&l&n▎&f Последняя проверка: &x&f&5&8&b&7&a%last_check%"
+    - "&x&F&F&5&6&3&B&l&n▎&f Жалоба подана: &x&f&5&8&b&7&a%date%"
+    - "&x&F&F&5&6&3&B&l&n▎&f Сервер: &x&f&5&8&b&7&a%server%"
+    - "&x&F&F&5&6&3&B&l&n▎&f Комментарий:"
+    - "&x&F&F&5&6&3&B&l▎&f  %comment%"
+    - " "
+    - "&x&F&F&5&6&3&B&n◢&f  &a[ЛКМ] &fЗакрыть жалобу со "
+    - "&x&F&F&5&6&3&B◤&f         статусом &a[ПРИНЯТА]"
+    - " "
+    - "&x&F&F&5&6&3&B&n◢&f  &a[ПКМ] &fЗакрыть жалобу со "
+    - "&x&F&F&5&6&3&B◤&f         статусом &4[ЛОЖНАЯ]"

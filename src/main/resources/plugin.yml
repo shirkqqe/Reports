@@ -1,0 +1,37 @@
+name: Reports
+version: '${version}'
+main: ru.shirk.reports.Reports
+api-version: '1.16'
+authors: [shirkqqe]
+description: Reports
+website: https://github.com/shirkqqe
+
+commands:
+  reports:
+    description: "Команда для управления жалобами"
+    permission-message: "§7Команда не найдена или у Вас нет доступа к ней."
+  reportlist:
+    description: "Команда, открывающая меню репортов для модераторов/администраторов"
+    permission-message: "§7Команда не найдена или у Вас нет доступа к ней."
+  cheatreport:
+    aliases:
+      - cr
+      - creport
+    description: "Команда для отправки жалоб. Доступна всем игрокам."
+  rmute:
+    description: "Команда для временной блокировки отправки жалоб игроку."
+    permission: "reports.moderator"
+    permission-message: "§7Команда не найдена или у Вас нет доступа к ней."
+  runmute:
+    description: "Команда для временной блокировки отправки жалоб игроку."
+    permission: "reports.admin"
+    permission-message: "§7Команда не найдена или у Вас нет доступа к ней."
+  rtoggle:
+    description: "Команда для временной блокировки отправки жалоб игроку."
+    permission: "reports.moderator"
+    permission-message: "§7Команда не найдена или у Вас нет доступа к ней."
+permissions:
+  reports.moderator:
+    default: op
+  reports.admin:
+    default: op
