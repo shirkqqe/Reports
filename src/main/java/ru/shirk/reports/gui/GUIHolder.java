@@ -110,7 +110,8 @@ public class GUIHolder implements InventoryHolder {
         final Player base = base();
         if (base == null) return;
         if (inventory == null) return;
-        inventory = Bukkit.createInventory(this, 54, Component.text(ChatColor.DARK_GRAY + currentWindow.getTitle()));
+        inventory = Bukkit.createInventory(this, 54, Component.text(ChatColor.DARK_GRAY +
+                currentWindow.getTitle()));
         Bukkit.getScheduler().runTaskAsynchronously(Reports.getInstance(), () -> {
             inventory.clear();
 
@@ -153,7 +154,7 @@ public class GUIHolder implements InventoryHolder {
                             final HashMap<String, Report> usersReports = Reports.getReportManager().getUsersReports();
                             if (usersReports.isEmpty()) return;
                             final String[] users = usersReports.keySet().toArray(new String[0]);
-
+    
                             for (int i = startIndex; i < usersReports.size() && slot < 45; i++) {
                                 final String user = users[i];
                                 final Report report = usersReports.get(user);
