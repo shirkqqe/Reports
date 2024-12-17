@@ -23,6 +23,7 @@ import ru.shirk.reports.reports.ReportStatus;
 import ru.shirk.reports.tools.Utils;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.UUID;
 import java.util.stream.Stream;
 
@@ -36,10 +37,9 @@ public class GUIHolder implements InventoryHolder {
     private GUIWindow currentWindow;
     private int page;
     @Getter
-    @NonNull
-    private final UUID owner;
+    private final @NonNull UUID owner;
     private Inventory inventory;
-    private SortType sortType = SortType.NEW;
+    private @NonNull SortType sortType = SortType.NEW;
 
     // items
     private final ItemStack decor = new ItemStack(Material.BLACK_STAINED_GLASS_PANE);
@@ -149,6 +149,24 @@ public class GUIHolder implements InventoryHolder {
                                 slot++;
                             }
                         }
+                        case COUNT -> {
+                            final HashMap<String, Report> usersReports = Reports.getReportManager().getUsersReports();
+                            if (usersReports.isEmpty()) return;
+                            final String[] users = usersReports.keySet().toArray(new String[0]);
+
+                            for (int i = startIndex; i < usersReports.size() && slot < 45; i++) {
+                                final String user = users[i];
+                                final Report report = usersReports.get(user);
+                                if (user == null || report == null) continue;
+                                if (report.getModerator() != null && report.getModerator().getName().equals(base.getName())) {
+                                    inventory.setItem(slot, ownCheckUserItemStack(user, report));
+                                    slot++;
+                                    continue;
+                                }
+                                inventory.setItem(slot, newUserItemStack(user, report));
+                                slot++;
+                            }
+                        }
                     }
                 }
                 case "REMOVE_REPORTS" -> {
@@ -234,21 +252,57 @@ public class GUIHolder implements InventoryHolder {
         return Bukkit.getPlayer(owner);
     }
 
+    private @NonNull ItemStack newUserItemStack(@NonNull String username, @NonNull Report report) {
+        final ItemStack itemStack = new ItemStack(Reports.getConfigurationManager().getConfig("settings.yml")
+                .m("report_item.material"));
+        final ItemMeta itemMeta = itemStack.getItemMeta();
+        itemMeta.setDisplayName(
+                Reports.getConfigurationManager().getConfig("settings.yml").c("report_item.name")
+                        .replace("%player%", username)
+                        .replace("%server%", report.getServerId())
+        );
+        itemMeta.getPersistentDataContainer().set(NamespacedKey.minecraft("suspected"), PersistentDataType.STRING,
+                report.getReported());
+        itemMeta.setLore(report.getStatus() == ReportStatus.OPENED ? Utils.replaceLorePlaceholders(Reports
+                .getConfigurationManager().getConfig("settings.yml").cl("report_item.lore"), report) :
+                Utils.replaceLorePlaceholders(Reports.getConfigurationManager().getConfig("settings.yml")
+                        .cl("report_item.lore_active"), report));
+        itemStack.setItemMeta(itemMeta);
+        return itemStack;
+    }
+
+    private @NonNull ItemStack ownCheckUserItemStack(@NonNull String username, @NonNull Report report) {
+        final ItemStack itemStack = new ItemStack(Reports.getConfigurationManager().getConfig("settings.yml")
+                .m("report_item.material"));
+        final ItemMeta itemMeta = itemStack.getItemMeta();
+        itemMeta.setDisplayName(
+                Reports.getConfigurationManager().getConfig("settings.yml").c("report_item.name")
+                        .replace("%player%", report.getReported())
+                        .replace("%server%", report.getServerId())
+        );
+        itemMeta.getPersistentDataContainer().set(NamespacedKey.minecraft("suspected"), PersistentDataType.STRING,
+                report.getReported());
+        itemMeta.setLore(Utils.replaceLorePlaceholders(Reports.getConfigurationManager().getConfig("settings.yml")
+                .cl("report_item.lore_own"), report));
+        itemStack.setItemMeta(itemMeta);
+        return itemStack;
+    }
+
     private ItemStack newReportItemStack(final Report report) {
         final ItemStack itemStack = new ItemStack(Reports.getConfigurationManager().getConfig("settings.yml")
                 .m("report_item.material"));
         final ItemMeta itemMeta = itemStack.getItemMeta();
-        itemMeta.setDisplayName(Reports.getConfigurationManager().getConfig("settings.yml")
-                .c("report_item.name").replace("%number%", "" + report.getNumber()));
-        itemMeta.getPersistentDataContainer().set(NamespacedKey.minecraft("number"), PersistentDataType.INTEGER,
-                report.getNumber());
-        if (report.getStatus() == ReportStatus.OPENED) {
-            itemMeta.setLore(Utils.replaceLorePlaceholders(Reports.getConfigurationManager().getConfig("settings.yml")
-                    .cl("report_item.lore"), report));
-        } else if (report.getStatus() == ReportStatus.CHECK) {
-            itemMeta.setLore(Utils.replaceLorePlaceholders(Reports.getConfigurationManager().getConfig("settings.yml")
-                    .cl("report_item.lore_active"), report));
-        }
+        itemMeta.setDisplayName(
+                Reports.getConfigurationManager().getConfig("settings.yml").c("report_item.name")
+                        .replace("%player%", report.getReported())
+                        .replace("%server%", report.getServerId())
+        );
+        itemMeta.getPersistentDataContainer().set(NamespacedKey.minecraft("suspected"), PersistentDataType.STRING,
+                report.getReported());
+        itemMeta.setLore(report.getStatus() == ReportStatus.OPENED ? Utils.replaceLorePlaceholders(Reports
+                .getConfigurationManager().getConfig("settings.yml").cl("report_item.lore"), report) :
+                Utils.replaceLorePlaceholders(Reports.getConfigurationManager().getConfig("settings.yml")
+                        .cl("report_item.lore_active"), report));
         itemStack.setItemMeta(itemMeta);
         return itemStack;
     }
@@ -257,10 +311,13 @@ public class GUIHolder implements InventoryHolder {
         final ItemStack itemStack = new ItemStack(Reports.getConfigurationManager().getConfig("settings.yml")
                 .m("report_item.material"));
         final ItemMeta itemMeta = itemStack.getItemMeta();
-        itemMeta.setDisplayName(Reports.getConfigurationManager().getConfig("settings.yml")
-                .c("report_item.name").replace("%number%", "" + report.getNumber()));
-        itemMeta.getPersistentDataContainer().set(NamespacedKey.minecraft("number"), PersistentDataType.INTEGER,
-                report.getNumber());
+        itemMeta.setDisplayName(
+                Reports.getConfigurationManager().getConfig("settings.yml").c("report_item.name")
+                        .replace("%player%", report.getReported())
+                        .replace("%server%", report.getServerId())
+        );
+        itemMeta.getPersistentDataContainer().set(NamespacedKey.minecraft("suspected"), PersistentDataType.STRING,
+                report.getReported());
         itemMeta.setLore(Utils.replaceLorePlaceholders(Reports.getConfigurationManager().getConfig("settings.yml")
                 .cl("report_item.lore_own"), report));
         itemStack.setItemMeta(itemMeta);
@@ -310,7 +367,8 @@ public class GUIHolder implements InventoryHolder {
 
     public enum SortType {
         NEW,
-        OLD;
+        OLD,
+        COUNT;
 
         public ItemStack buildItem() {
             ItemStack itemStack = new ItemStack(Material.NETHER_STAR);
@@ -323,6 +381,7 @@ public class GUIHolder implements InventoryHolder {
                                     " ",
                                     " &6●&f Сначала новые",
                                     " &7●&f Сначала старые",
+                                    " &7●&f По количеству жалоб",
                                     " ").map(line -> line.replace('&', '§'))
                             .toList());
                 }
@@ -331,6 +390,16 @@ public class GUIHolder implements InventoryHolder {
                                     " ",
                                     " &7●&f Сначала новые",
                                     " &6●&f Сначала старые",
+                                    " &7●&f По количеству жалоб",
+                                    " ").map(line -> line.replace('&', '§'))
+                            .toList());
+                }
+                case COUNT -> {
+                    itemMeta.setLore(Stream.of(
+                                    " ",
+                                    " &7●&f Сначала новые",
+                                    " &7●&f Сначала старые",
+                                    " &6●&f По количеству жалоб",
                                     " ").map(line -> line.replace('&', '§'))
                             .toList());
                 }

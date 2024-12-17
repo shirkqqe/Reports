@@ -12,6 +12,7 @@ import ru.shirk.reports.users.User;
 import java.sql.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashSet;
 
 public class DatabaseStorage {
     private final DatabaseManager mySqlManager;
@@ -195,6 +196,60 @@ public class DatabaseStorage {
         } finally {
             mySqlManager.returnConnection(connection);
         }
+    }
+
+    public @NonNull HashSet<String> getUniqueReportedUsers() {
+        final HashSet<String> uniqueReportedUsers = new HashSet<>();
+        final Connection connection = mySqlManager.getConnection();
+        try {
+            final Statement statement = connection.createStatement();
+            final ResultSet resultSet = statement.executeQuery("SELECT DISTINCT `reported` " +
+                    "FROM `" + mySqlManager.getBaseName() + "`.`reports`");
+
+            while (resultSet.next()) {
+                uniqueReportedUsers.add(resultSet.getString(1));
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Произошла ошибка при получении уникальных пользователей ", e);
+        } finally {
+            mySqlManager.returnConnection(connection);
+        }
+        return uniqueReportedUsers;
+    }
+
+    public @Nullable Report getLastUserReport(@NonNull String username) {
+        final Connection connection = mySqlManager.getConnection();
+        try {
+            final PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM `" +
+                    mySqlManager.getBaseName() + "`.`reports` WHERE `reported` = ? ORDER BY `report-date` DESC LIMIT 1");
+
+            preparedStatement.setString(1, username);
+
+            final ResultSet resultSet = preparedStatement.executeQuery();
+            if (resultSet.next()) {
+                Moderator moderator = null;
+                if (resultSet.getString("moderator") != null) {
+                    final IUser user = getUser(resultSet.getString("moderator"));
+                    if (user instanceof Moderator) moderator = (Moderator) user;
+                }
+                return new Report(
+                        resultSet.getInt("id"),
+                        resultSet.getString("reported"),
+                        resultSet.getString("username"),
+                        resultSet.getString("reason"),
+                        moderator,
+                        resultSet.getObject("report-date", LocalDateTime.class),
+                        ReportStatus.valueOf(resultSet.getString("status")),
+                        resultSet.getString("server-id")
+                );
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Произошла ошибка при получении последней жалобы на пользователя " + username +
+                    " (" + e.getMessage() + ")");
+        } finally {
+            mySqlManager.returnConnection(connection);
+        }
+        return null;
     }
 
     public void removeReport(int id) {
